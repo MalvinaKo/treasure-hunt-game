@@ -1,6 +1,6 @@
 ﻿static void TreasureHunt()
 {
-    bool gameRunning = true;
+    var gameRunning = true;
 
     while (gameRunning)
     {
@@ -14,11 +14,11 @@
         var treasureCounter = 0;
         Console.Clear();
         DisplayGrid(grid);
-        PlaceTreasures(numberOfTreasures, grid);
-        PlaceObstacles(numberOfObstacles, grid);
+        PlaceItems(numberOfTreasures, '$', grid);
+        PlaceItems(numberOfObstacles, '|', grid);
 
         ConsoleKeyInfo keyInfo;
-        bool gameActive = true;
+        var gameActive = true;
 
         while (gameActive && (keyInfo = Console.ReadKey(true)).Key != ConsoleKey.Escape)
         {
@@ -47,10 +47,7 @@
 
         Console.WriteLine("Press 'R' to restart the game or any other key to exit.");
         var restartKey = Console.ReadKey(true).Key;
-        if (restartKey != ConsoleKey.R)
-        {
-            gameRunning = false;
-        }
+        if (restartKey != ConsoleKey.R) gameRunning = false;
     }
 }
 
@@ -68,17 +65,17 @@ static char[,] InitializeGrid(int gridRows, int gridColumns)
 {
     var grid = new char[gridRows, gridColumns];
     for (var r = 0; r < gridRows; r++)
-        for (var c = 0; c < gridColumns; c++)
-            grid[r, c] = '.';
+    for (var c = 0; c < gridColumns; c++)
+        grid[r, c] = '.';
     return grid;
 }
 
-static int PlaceTreasures(int numberOfTreasures, char[,] grid)
+static int PlaceItems(int numberOfItems, char itemSymbol, char[,] grid)
 {
     var random = new Random();
     var gridRows = grid.GetLength(0);
     var gridColumns = grid.GetLength(1);
-    for (var i = 0; i < numberOfTreasures; i++)
+    for (var i = 0; i < numberOfItems; i++)
     {
         int row, column;
         do
@@ -87,30 +84,10 @@ static int PlaceTreasures(int numberOfTreasures, char[,] grid)
             column = random.Next(gridColumns);
         } while (grid[row, column] == '$' || grid[row, column] == 'P');
 
-        grid[row, column] = '$';
+        grid[row, column] = itemSymbol;
     }
 
-    return numberOfTreasures;
-}
-
-static int PlaceObstacles(int numberOfObstacles, char[,] grid)
-{
-    var random = new Random();
-    var gridRows = grid.GetLength(0);
-    var gridColumns = grid.GetLength(1);
-    for (var i = 0; i < numberOfObstacles; i++)
-    {
-        int row, column;
-        do
-        {
-            row = random.Next(gridRows);
-            column = random.Next(gridColumns);
-        } while (grid[row, column] == '$' || grid[row, column] == 'P');
-
-        grid[row, column] = '|';
-    }
-
-    return numberOfObstacles;
+    return numberOfItems;
 }
 
 static (int, int) PlacePlayer(char[,] grid)
