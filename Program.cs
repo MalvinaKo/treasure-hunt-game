@@ -1,40 +1,53 @@
 ﻿static void TreasureHunt()
 {
-    var (gridRows, gridColumns) = GetGridSize();
-    var grid = InitializeGrid(gridRows, gridColumns);
-    var numberOfTreasures = PlaceTreasures(grid);
-    var numberOfObstacles = PlaceObstacles(grid);
-    var (playerRow, playerColumn) = PlacePlayer(grid);
-    var (monsterRow, monsterColumn) = PlaceMonster(grid);
+    bool gameRunning = true;
 
-    var treasureCounter = 0;
-    Console.Clear();
-    DisplayGrid(grid);
-
-    ConsoleKeyInfo keyInfo;
-    while ((keyInfo = Console.ReadKey(true)).Key != ConsoleKey.Escape)
+    while (gameRunning)
     {
-        (playerRow, playerColumn, treasureCounter) =
-            MovePlayer(grid, playerRow, playerColumn, keyInfo, treasureCounter);
-        (monsterRow, monsterColumn) = MoveMonster(grid, playerRow, playerColumn, monsterRow, monsterColumn);
+        var (gridRows, gridColumns) = GetGridSize();
+        var grid = InitializeGrid(gridRows, gridColumns);
+        var numberOfTreasures = PlaceTreasures(grid);
+        var numberOfObstacles = PlaceObstacles(grid);
+        var (playerRow, playerColumn) = PlacePlayer(grid);
+        var (monsterRow, monsterColumn) = PlaceMonster(grid);
 
+        var treasureCounter = 0;
         Console.Clear();
         DisplayGrid(grid);
-        Console.WriteLine("Number of Treasures: " + numberOfTreasures);
-        Console.WriteLine("Treasure Counter: " + treasureCounter);
 
-        if (treasureCounter == numberOfTreasures)
+        ConsoleKeyInfo keyInfo;
+        bool gameActive = true;
+
+        while (gameActive && (keyInfo = Console.ReadKey(true)).Key != ConsoleKey.Escape)
         {
+            (playerRow, playerColumn, treasureCounter) =
+                MovePlayer(grid, playerRow, playerColumn, keyInfo, treasureCounter);
+            (monsterRow, monsterColumn) = MoveMonster(grid, playerRow, playerColumn, monsterRow, monsterColumn);
+
             Console.Clear();
-            Console.WriteLine($"You found all {numberOfTreasures} treasures and win the game!");
-            break;
+            DisplayGrid(grid);
+            Console.WriteLine("Number of Treasures: " + numberOfTreasures);
+            Console.WriteLine("Treasure Counter: " + treasureCounter);
+
+            if (treasureCounter == numberOfTreasures)
+            {
+                Console.Clear();
+                Console.WriteLine($"You found all {numberOfTreasures} treasures and win the game!");
+                gameActive = false;
+            }
+            else if (monsterRow == playerRow && monsterColumn == playerColumn)
+            {
+                Console.Clear();
+                Console.WriteLine("The monster caught you! Game over.");
+                gameActive = false;
+            }
         }
 
-        if (monsterRow == playerRow && monsterColumn == playerColumn)
+        Console.WriteLine("Press 'R' to restart the game or any other key to exit.");
+        var restartKey = Console.ReadKey(true).Key;
+        if (restartKey != ConsoleKey.R)
         {
-            Console.Clear();
-            Console.WriteLine("The monster caught you! Game over.");
-            TreasureHunt();
+            gameRunning = false;
         }
     }
 }
@@ -53,8 +66,8 @@ static char[,] InitializeGrid(int gridRows, int gridColumns)
 {
     var grid = new char[gridRows, gridColumns];
     for (var r = 0; r < gridRows; r++)
-    for (var c = 0; c < gridColumns; c++)
-        grid[r, c] = '.';
+        for (var c = 0; c < gridColumns; c++)
+            grid[r, c] = '.';
     return grid;
 }
 
