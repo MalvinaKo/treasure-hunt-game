@@ -6,14 +6,16 @@
     {
         var (gridRows, gridColumns) = GetGridSize();
         var grid = InitializeGrid(gridRows, gridColumns);
-        var numberOfTreasures = PlaceTreasures(grid);
-        var numberOfObstacles = PlaceObstacles(grid);
+        var numberOfTreasures = (int)(gridRows * gridColumns * 0.1);
+        var numberOfObstacles = (int)(gridRows * gridColumns * 0.2);
         var (playerRow, playerColumn) = PlacePlayer(grid);
         var (monsterRow, monsterColumn) = PlaceMonster(grid);
 
         var treasureCounter = 0;
         Console.Clear();
         DisplayGrid(grid);
+        PlaceTreasures(numberOfTreasures, grid);
+        PlaceObstacles(numberOfObstacles, grid);
 
         ConsoleKeyInfo keyInfo;
         bool gameActive = true;
@@ -71,12 +73,11 @@ static char[,] InitializeGrid(int gridRows, int gridColumns)
     return grid;
 }
 
-static int PlaceTreasures(char[,] grid)
+static int PlaceTreasures(int numberOfTreasures, char[,] grid)
 {
     var random = new Random();
     var gridRows = grid.GetLength(0);
     var gridColumns = grid.GetLength(1);
-    var numberOfTreasures = random.Next(2, gridRows * gridColumns / 10);
     for (var i = 0; i < numberOfTreasures; i++)
     {
         int row, column;
@@ -92,12 +93,11 @@ static int PlaceTreasures(char[,] grid)
     return numberOfTreasures;
 }
 
-static int PlaceObstacles(char[,] grid)
+static int PlaceObstacles(int numberOfObstacles, char[,] grid)
 {
     var random = new Random();
     var gridRows = grid.GetLength(0);
     var gridColumns = grid.GetLength(1);
-    var numberOfObstacles = gridRows * gridColumns / 20;
     for (var i = 0; i < numberOfObstacles; i++)
     {
         int row, column;
